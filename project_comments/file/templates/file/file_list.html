@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>list of files</title>
+</head>
+<body>
+    <h1>list of files</h1>
+    <ul>
+        {% for file in files %}
+            <li>type: {{ file.filetype }} — path: {{ file.filepath }}</li>
+        {% empty %}
+            <li>No files available.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from comments.models import Comment
 
