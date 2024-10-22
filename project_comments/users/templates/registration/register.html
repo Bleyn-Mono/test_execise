@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+</head>
+<body>
+    <h2>Registration</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Отображаем форму -->
+        <button type="submit">Register</button>
+        <p>Already register? <a href="{% url 'login' %}">Login</a></p>
+    </form>
+    {% if form.errors %}
+        <div class="error">
+            <p>There was a problem with your submission:</p>
+            {{ form.errors }}
+        </div>
+{% endif %}
+</body>
+</html>

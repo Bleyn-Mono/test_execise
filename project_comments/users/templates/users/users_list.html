@@ -5,7 +5,8 @@
     <title>User list</title>
 </head>
 <body>
-    <h1>User list</h1>
+    <h1>Welcome: {{ request.user.username }}</h1>
+    <h2>Here is the list of users:</h2>
     <ul>
         {% for user in users %}
             <li>{{ user.username }} - {{ user.email }}</li>
@@ -13,5 +14,11 @@
             <li>Not users.</li>
         {% endfor %}
     </ul>
+    <a href="{% url 'comment_create' %}">
+        <button>Add comment</button>
+    </a>
+    <a href="{% url 'register' %}">
+        <button>Register new user</button>
+    </a>
 </body>
 </html>
