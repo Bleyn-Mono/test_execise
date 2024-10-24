@@ -8,8 +8,17 @@
     <h1>List of comments</h1>
     <ul>
         {% for comment in comments %}
-            <li>{{ comment.text }} — <a href="{% url 'update_comment' comment.id %}">Update</a> |
-            <a href="{% url 'delete_comment' comment.id %}">Delete</a></li>
+            <li>
+                <strong>{{ comment.user.username }}</strong>: {{ comment.text }}
+                <br>
+                <a href="{% url 'comment_create_with_parent' comment.id %}">Reply</a> <!-- Кнопка для ответа на комментарий -->
+                <a href="{% url 'update_comment' comment.id %}">Update</a>
+                <a href="{% url 'delete_comment' comment.id %}">Delete</a>
+                <!--рекурсивный вызов функции для вложеных комментариев-->
+                {% include 'comments/recursive_comment.html' with comment=comment %}
+            </li>
+        {% empty %}
+            <li>No comments yet.</li>
         {% endfor %}
     </ul>
     <a href="{% url 'comment_create' %}">Add comment</a>
