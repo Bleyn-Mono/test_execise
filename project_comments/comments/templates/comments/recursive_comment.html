@@ -2,7 +2,9 @@
     <ul>
         {% for child in comment.children.all %}
             <li>
-                <strong>{{ child.user.username }}</strong>: {{ child.text }}
+                <strong>{{ child.user.username }}</strong>:
+                <br>
+                {{ child.text }}
                 <br>
                 <a href="{% url 'comment_create_with_parent' child.id %}">Reply</a> <!-- Кнопка для ответа на вложенный комментарий -->
                 <a href="{% url 'update_comment' comment.id %}">Update</a>

@@ -9,8 +9,27 @@ from django.contrib.auth.models import User
 
 Useer = get_user_model()
 
+
+def get_sorted_comments(request):
+    '''function to sort comment by field'''
+    sort_by = request.GET.get('sort_by', 'created_at') #по умолчанию сортировка по дате
+    allowed_sort_fields = {
+        'username': 'user__username',
+        'email': 'user__email',
+        'created_at': 'created_at'
+    }
+    # Фильтруем только заглавные комментарии (те, у которых parent = None)
+    comments = Comment.objects.filter(parent__isnull=True)
+    # Проверяем, разрешено ли поле для сортировки
+    if sort_by in allowed_sort_fields:
+        comments = comments.order_by(allowed_sort_fields[sort_by])
+    else:
+        comments = comments.objects.order_by('created_at')
+    return comments
+
+
 def comment_list(request):
-    comments = Comment.objects.filter(parent__isnull=True) #отображаем только родительские коментарии
+    comments = get_sorted_comments(request)
     return render(request, 'comments/comment_list.html', {'comments': comments})
 
 

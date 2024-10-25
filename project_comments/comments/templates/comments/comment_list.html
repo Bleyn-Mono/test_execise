@@ -3,24 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <title>List of comments</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
 </head>
 <body>
+    <p>Sort by:
+        <a href="?sort_by=username">User Name</a> |
+        <a href="?sort_by=email">E-mail</a> |
+        <a href="?sort_by=created_at">Date Added</a>
+    </p>
     <h1>List of comments</h1>
     <ul>
         {% for comment in comments %}
             <li>
-                <strong>{{ comment.user.username }}</strong>: {{ comment.text }}
+                <strong>{{ comment.user.username }}</strong>:
                 <br>
-                <a href="{% url 'comment_create_with_parent' comment.id %}">Reply</a> <!-- Кнопка для ответа на комментарий -->
-                <a href="{% url 'update_comment' comment.id %}">Update</a>
-                <a href="{% url 'delete_comment' comment.id %}">Delete</a>
-                <!--рекурсивный вызов функции для вложеных комментариев-->
+                {{ comment.text }}
+                <br>
+                <a href="{% url 'comment_create_with_parent' comment.id %}"><button class="btn">Reply</button></a> <!-- Кнопка для ответа на комментарий -->
+                <a href="{% url 'update_comment' comment.id %}"><button class="btn">Update</button></a>
+                <a href="{% url 'delete_comment' comment.id %}"><button class="btn">Delete</button></a>
+
+                <!-- Кнопка для показа/скрытия ответов (дочерних комментариев) -->
+                {% if comment.children.all %}
+                    <button onclick="toggleReplies('replies-{{ comment.id }}')">Show replies</button>
+                {% endif %}
+            <!--рекурсивный вызов функции для вложеных комментариев-->
+                <div  id="replies-{{ comment.id }}" style="display: none;">
                 {% include 'comments/recursive_comment.html' with comment=comment %}
+                </div>
             </li>
         {% empty %}
             <li>No comments yet.</li>
         {% endfor %}
     </ul>
-    <a href="{% url 'comment_create' %}">Add comment</a>
+    <a href="{% url 'comment_create' %}"><button class="btn">Add comment</button></a>
+
+    <!-- JavaScript для показа/скрытия дочерних комментариев -->
+    <script>
+        function toggleReplies(elementId) {
+            const repliesDiv = document.getElementById(elementId);
+            if (repliesDiv.style.display === "none") {
+                repliesDiv.style.display = "block";
+            } else {
+                repliesDiv.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>
