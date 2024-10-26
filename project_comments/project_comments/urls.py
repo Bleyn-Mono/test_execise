@@ -22,4 +22,5 @@ urlpatterns = [
     path('files/', include('file.urls')),
     path('comments/', include('comments.urls')),
     path('users/', include('users.urls')),
+    path('captcha/', include('captcha.urls')),
 ]

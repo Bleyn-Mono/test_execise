@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'users',
     'file',
     'comments',
+    'captcha',
 ]
 
 MIDDLEWARE = [
