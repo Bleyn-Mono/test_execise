@@ -5,11 +5,32 @@
     <title>Add comment</title>
 </head>
 <body>
+    <h2>Add Comment</h2>
+
+    <!-- Панель для ввода HTML-тегов -->
+    <div class="button-panel">
+        <button type="button" onclick="addTag('<i>', '</i>')">[i]</button>
+        <button type="button" onclick="addTag('<strong>', '</strong>')">[strong]</button>
+        <button type="button" onclick="addTag('<code>', '</code>')">[code]</button>
+        <button type="button" onclick="addTag('<a href=\'\' title=\'\'>', '</a>')">[a]</button>
+    </div>
+
     <form method='Post'>
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">save</button>
     </form>
     <a href="{% url 'comment_list' %}">Back to comments</a> <!-- Ссылка для возврата -->
+
+    <script>
+        function addTag(openTag, closeTag) {
+            var textarea = document.querySelector('textarea[name="text"]');
+            var start = textarea.selectionStart;
+            var end = textarea.selectionEnd;
+            // Вставляем теги в текст
+            textarea.value = textarea.value.substring(0, start) + openTag + textarea.value.substring(start, end) + closeTag + textarea.value.substring(end);
+            textarea.focus();
+        }
+    </script>
 </body>
 </html>

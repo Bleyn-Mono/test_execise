@@ -1,5 +1,6 @@
 from django.db import models
 from users.models import User
+import bleach
 
 
 class Comment(models.Model):
@@ -9,5 +10,12 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.text[:20]  # Отображать первые 20 символов
+    #переопределяем метод
+    def save(self, *args, **kwargs):
+        # Очищаем текст комментария перед сохранением
+        allowed_tags = ['a', 'code', 'i', 'strong']
+        allowed_attributes = {
+            'a': ['href', 'title']
+        }
+        self.text = bleach.clean(self.text, tags=allowed_tags, attributes=allowed_attributes)
+        super().save(*args, **kwargs)

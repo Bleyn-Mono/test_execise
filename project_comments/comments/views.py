@@ -5,6 +5,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from users.views import register
 from .models import Comment
 from .forms import CommentForm
+from django.urls import reverse
 from django.contrib.auth.models import User
 
 
@@ -14,22 +15,29 @@ Useer = get_user_model()
 def get_sorted_comments(request):
     '''function to sort comment by field'''
     sort_by = request.GET.get('sort_by', 'created_at') #по умолчанию сортировка по дате
+    order = request.GET.get('order', 'desc')  # Направление по умолчанию - по убыванию
     allowed_sort_fields = {
         'username': 'user__username',
         'email': 'user__email',
         'created_at': 'created_at'
     }
+    # Выбираем поле для сортировки и направление
+    sort_field = allowed_sort_fields.get(sort_by, 'created_at')
+    if order == 'desc':
+        sort_field = f'-{sort_field}'
     # Фильтруем только заглавные комментарии (те, у которых parent = None)
     comments = Comment.objects.filter(parent__isnull=True)
     # Проверяем, разрешено ли поле для сортировки
-    if sort_by in allowed_sort_fields:
-        comments = comments.order_by(allowed_sort_fields[sort_by])
-    else:
-        comments = comments.objects.order_by('created_at')
+    comments = comments.order_by(sort_field)
     return comments
 
 
 def comment_list(request):
+    # Проверка наличия параметров `sort_by` и `order`
+    if 'sort_by' not in request.GET and 'order' not in request.GET:
+        base_url = reverse('comment_list')
+        query_string = '?sort_by=created_at&order=desc'
+        return redirect(base_url + query_string)
     comments = get_sorted_comments(request)
     #пагинатор
     comments_paginator = Paginator(comments, 25)
