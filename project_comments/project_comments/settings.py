@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'users',
+    'file',
+    'comments',
+    'captcha',
 ]
 
 MIDDLEWARE = [
@@ -121,3 +126,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_URL = 'users_list'  # Перенаправление на главную страницу после входа
+LOGOUT_REDIRECT_URL = 'users_list'  # Перенаправление на главную страницу после выхода
+LOGIN_URL = 'register'  # Перенаправление на страницу регистрации, если пользователь не авторизован
+AUTH_USER_MODEL = 'users.User'
+STATICFILES_DIRS = [BASE_DIR /'static']
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

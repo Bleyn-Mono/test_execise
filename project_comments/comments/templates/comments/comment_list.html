@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List of comments</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <!-- Блок сортировки -->
+    <p>Sort by:
+        <a href="?sort_by=username&order={% if request.GET.sort_by == 'username' and request.GET.order == 'asc' %}desc{% else %}asc{% endif %}&page={{ comments.number }}">
+            User Name
+        </a> |
+        <a href="?sort_by=email&order={% if request.GET.sort_by == 'email' and request.GET.order == 'asc' %}desc{% else %}asc{% endif %}&page={{ comments.number }}">
+            E-mail
+        </a> |
+        <a href="?sort_by=created_at&order={% if request.GET.sort_by == 'created_at' and request.GET.order == 'asc' %}desc{% else %}asc{% endif %}&page={{ comments.number }}">
+            Date Added
+        </a>
+    </p>
+
+    <h1>List of comments</h1>
+    <ul>
+        {% for comment in comments %}
+            <li>
+                <strong>{{ comment.user.username }}</strong>:
+                <br>
+                {{ comment.text }}
+                <br>
+                                <!-- Файлы комментария -->
+                {% if comment.files.all %}
+                    <ul>
+                        {% for file in comment.files.all %}
+                            <li>
+                                {% if file.filetype == 'image' %}
+                                    <img src="{{ file.filepath.url }}" alt="Image" width="100">
+                                {% else %}
+                                    <a href="{{ file.filepath.url }}">{{ file.filepath.name }}</a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <a href="{% url 'comment_create_with_parent' comment.id %}"><button class="btn">Reply</button></a> <!-- Кнопка для ответа на комментарий -->
+                <a href="{% url 'update_comment' comment.id %}"><button class="btn">Update</button></a>
+                <a href="{% url 'delete_comment' comment.id %}"><button class="btn">Delete</button></a>
+
+                <!-- Кнопка для показа/скрытия ответов (дочерних комментариев) -->
+                {% if comment.children.all %}
+                    <button onclick="toggleReplies('replies-{{ comment.id }}')">Show replies</button>
+                {% endif %}
+            <!--рекурсивный вызов функции для вложеных комментариев-->
+                <div  id="replies-{{ comment.id }}" style="display: none;">
+                {% include 'comments/recursive_comment.html' with comment=comment %}
+                </div>
+            </li>
+        {% empty %}
+            <li>No comments yet.</li>
+        {% endfor %}
+    </ul>
+        <!-- Пагинация -->
+
+    <div class="row">
+        <div class="large-3 large-offset-5 columns">
+            <ul class="pagination">
+                {% if comments.has_previous %}
+                    <li class="arrow"><a href="?page={{ comments.previous_page_number }}">&laquo;</a></li>
+                {% else %}
+                    <li class="arrow unavailable"><a href="">&laquo;</a></li>
+                {% endif %}
+
+                {% for page in comments.paginator.page_range %}
+                    <li class="{% if page_num == comments.number %}active{% endif %}">
+                        <a href="?page={{ page }}&sort_by={{ request.GET.sort_by }}&order={{ request.GET.order }}">
+                            {{ page }}
+                        </a>
+                    </li>
+                {% endfor %}
+                {% if comments.has_next %}
+                    <li class="arrow"><a href="?page={{ comments.next_page_number }}">&raquo;</a></li>
+                {% else %}
+                    <li class="arrow unavailable"><a href="">&raquo;</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+
+    <a href="{% url 'comment_create' %}"><button class="btn">Add comment</button></a>
+
+    <!-- JavaScript для показа/скрытия дочерних комментариев -->
+    <script>
+        function toggleReplies(elementId) {
+            const repliesDiv = document.getElementById(elementId);
+            if (repliesDiv.style.display === "none") {
+                repliesDiv.style.display = "block";
+            } else {
+                repliesDiv.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
