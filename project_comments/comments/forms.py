@@ -2,6 +2,7 @@ from django import forms
 from .models import Comment
 from captcha.fields import CaptchaField
 import bleach
+import re
 
 
 class CommentForm(forms.ModelForm):
@@ -15,6 +16,12 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['user_name', 'email', 'home_page', 'text', 'captcha', 'files']
+    #Серверная валидация
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if not email or not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            raise forms.ValidationError("Invalid email format.")
+        return email
 
     def clean_text(self):
         text = self.cleaned_data['text']
@@ -22,15 +29,11 @@ class CommentForm(forms.ModelForm):
         allowed_attributes = {
             'a': ['href', 'title']
         }
-
         # Используем bleach.clean для очистки текста и сохраняем очищенный результат
         cleaned_text = bleach.clean(text, tags=allowed_tags, attributes=allowed_attributes)
-
         # Применяем linkify, чтобы сделать URL кликабельными
         cleaned_text = bleach.linkify(cleaned_text)
-
         # Проверка, совпадает ли очищенный текст с оригиналом
         if cleaned_text != text:
             raise forms.ValidationError("Некоторые HTML-теги недопустимы или не закрыты.")
-
         return cleaned_text

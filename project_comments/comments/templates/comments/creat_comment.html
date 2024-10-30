@@ -15,11 +15,13 @@
         <button type="button" onclick="addTag('<a href=\'\' title=\'\'>', '</a>')">[a]</button>
     </div>
 
-    <form method='Post' enctype="multipart/form-data">
+    <form method='Post' enctype="multipart/form-data" id="commentForm">
         {% csrf_token %}
         {{ form.as_p }}
+        <button type="button" onclick="previewComment()">Preview</button>
         <button type="submit">save</button>
     </form>
+
     <a href="{% url 'comment_list' %}">Back to comments</a> <!-- Ссылка для возврата -->
 
     <script>
@@ -32,5 +34,45 @@
             textarea.focus();
         }
     </script>
+<!-- проверка валидации вводимых данных на стороне клиента -->
+    <script>
+    function validateForm() {
+        const email = document.querySelector('input[name="email"]').value;
+        const text = document.querySelector('textarea[name="text"]').value;
+
+        if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+            alert("Please enter a valid email.");
+            return false;
+        }
+        if (!text) {
+            alert("Comment text cannot be empty.");
+            return false;
+        }
+        return true;
+    }
+    </script>
+
+    <!-- Контейнер для предпросмотра -->
+    <div id="previewContainer"></div>
+
+    <script>
+        function previewComment() {
+            console.log("Preview button clicked");
+            const formData = new FormData(document.getElementById("commentForm"));
+            fetch("{% url 'preview_comment' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                },
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("previewContainer").innerHTML = data.preview;
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+
 </body>
 </html>

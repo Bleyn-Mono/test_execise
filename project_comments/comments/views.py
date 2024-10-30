@@ -8,6 +8,8 @@ from .forms import CommentForm
 from django.urls import reverse
 from file.models import File
 from django.contrib.auth.models import User
+from django.http import JsonResponse
+from django.template.loader import render_to_string
 
 
 Useer = get_user_model()
@@ -98,3 +100,15 @@ def comment_delete(request, comment_id):
         comment.delete()
         return redirect('comment_list')
     return render(request, 'comments/delete_comment.html', {'comment': comment})
+
+def preview_comment(request):  #проверяем валидацию на стороне сервера
+    if request.method == "POST":
+        text = request.POST.get("text", "")
+        user = request.user
+        context = {
+            "text": text,
+            "user": user,
+        }
+        preview_html = render_to_string("comments/preview_comment.html", context)
+        return JsonResponse({"preview": preview_html})
+    return JsonResponse({"error": "Invalid request"}, status=400)
