@@ -28,6 +28,20 @@
                 <br>
                 {{ comment.text }}
                 <br>
+                                <!-- Файлы комментария -->
+                {% if comment.files.all %}
+                    <ul>
+                        {% for file in comment.files.all %}
+                            <li>
+                                {% if file.filetype == 'image' %}
+                                    <img src="{{ file.filepath.url }}" alt="Image" width="100">
+                                {% else %}
+                                    <a href="{{ file.filepath.url }}">{{ file.filepath.name }}</a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
                 <a href="{% url 'comment_create_with_parent' comment.id %}"><button class="btn">Reply</button></a> <!-- Кнопка для ответа на комментарий -->
                 <a href="{% url 'update_comment' comment.id %}"><button class="btn">Update</button></a>
                 <a href="{% url 'delete_comment' comment.id %}"><button class="btn">Delete</button></a>

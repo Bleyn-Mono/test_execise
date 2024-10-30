@@ -6,6 +6,7 @@ from users.views import register
 from .models import Comment
 from .forms import CommentForm
 from django.urls import reverse
+from file.models import File
 from django.contrib.auth.models import User
 
 
@@ -66,6 +67,10 @@ def comment_create(request, parent_id=None):
                 parent_comment = get_object_or_404(Comment, id=parent_id)
                 comment.parent = parent_comment
             comment.save()  # Сохраняем комментарий в базу данных
+            # Обработка загруженных файлов
+            for file in request.FILES.getlist('files'):
+                file_type = 'image' if file.content_type.startswith('image') else 'document'
+                File.objects.create(filetype=file_type, filepath=file, comment=comment)
             return redirect('comment_list')
     # Если GET-запрос (просто отображение формы)
     else:

@@ -10,10 +10,11 @@ class CommentForm(forms.ModelForm):
     home_page = forms.URLField(required=False)  # Домашняя страница
     text = forms.CharField(widget=forms.Textarea, required=True)  # Текст комментария
     captcha = CaptchaField()
+    files = forms.FileField(widget=forms.ClearableFileInput(attrs={'allow_multiple_selected': True}), required=False)
 
     class Meta:
         model = Comment
-        fields = ['user_name', 'email', 'home_page', 'text', 'captcha']
+        fields = ['user_name', 'email', 'home_page', 'text', 'captcha', 'files']
 
     def clean_text(self):
         text = self.cleaned_data['text']

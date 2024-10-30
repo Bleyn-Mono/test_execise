@@ -15,7 +15,7 @@
         <button type="button" onclick="addTag('<a href=\'\' title=\'\'>', '</a>')">[a]</button>
     </div>
 
-    <form method='Post'>
+    <form method='Post' enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">save</button>
