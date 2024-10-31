@@ -5,9 +5,13 @@
     <title>Delete comment</title>
 </head>
 <body>
-    <form method="POST">
-        {% csrf_token %}
-        <button type="submit">delete</button>
-    </form>
+    <div class="container my-4">
+        <h2 class="mb-4">Are you sure you want to delete the comment?</h2>
+        <p class="alert alert-warning">{{ comment.text }}</p>
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit">delete</button>
+        </form>
+    </div>
 </body>
 </html>
