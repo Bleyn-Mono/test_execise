@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-u)(j!efz+%%4vcexcsvcqwb_icfx^yc-&$ygm&)36u4g$mfjq=
 DEBUG = True
 
 ALLOWED_HOSTS = ['testexecise-production.up.railway.app']
-
+CSRF_TRUSTED_ORIGINS = ['https://testexecise-production.up.railway.app']
 
 # Application definition
 
@@ -135,3 +135,5 @@ STATICFILES_DIRS = [BASE_DIR /'static']
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 STATIC_ROOT = BASE_DIR / "staticfiles"
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
