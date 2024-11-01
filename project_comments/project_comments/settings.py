@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-u)(j!efz+%%4vcexcsvcqwb_icfx^yc-&$ygm&)36u4g$mfjq=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['testexecise-production.up.railway.app']
 
 
 # Application definition
@@ -134,3 +134,4 @@ AUTH_USER_MODEL = 'users.User'
 STATICFILES_DIRS = [BASE_DIR /'static']
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+STATIC_ROOT = BASE_DIR / "staticfiles"
